@@ -9,8 +9,9 @@
 	<link rel="stylesheet" type="text/css" href="<?=BASE_URL;?>css/agenda.css" />
 </head>
 <body>
+<div class="container-fluid">
 	<header>
-		<img src="<?=BASE_URL;?>agenda/imagen" class="img-header" />
+		<img src="<?=BASE_URL;?>img/agenda.png" class="img-header" />
 		<h3>registrate es gratis</h3>
 	</header>
 	<nav>
@@ -18,7 +19,16 @@
 			<li><a href="<?=BASE_URL;?>">index</a></li>
 			<li><a href="<?=BASE_URL;?>agenda/registro">registrarse</a></li>
 			<?php if(isset($_SESSION["id_usuario"])){?>
-			<li><a href="<?=BASE_URL;?>agenda/logout">Cerrar Sesion</a></li>
+			<li><a href="<?=BASE_URL;?>agenda/usuario">Bienvenido(a): <?=$_SESSION["usuario"]?><span class="caret"></span></a> 
+				<ul class="sub-menu">
+					<li>
+						<a href="#"><img style="width:100%;" src="<?=BASE_URL;?>img/<?=Helper::silueta();?>" /></a> 
+					</li>
+					<li>
+						<a href="<?=BASE_URL;?>agenda/logout">Cerrar Sesión</a> 
+					</li>
+				</ul>
+			</li>
 			<?php }?>
 		</ul>
 	</nav>

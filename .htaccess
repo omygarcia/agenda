@@ -1,3 +1,5 @@
 RewriteEngine on
-RewriteCond $1 !^(index.php|css|js|images|robots.txt|plantilla|jquery-1.9.1|bootstrap|temas|fonts|ajax|json|woff|qarmi|Chalet|png|funciones.js|jquery.min.js|bootstrap.css|agenda.css)
+#RewriteBase /
+RewriteCond $1 !^(index.php|css|js|images|robots.txt|plantilla|jquery-1.9.1|bootstrap|temas|fonts|ajax|json|woff|qarmi|Chalet|png|funciones.js|jquery.min.js|bootstrap.css|agenda.css|img)
 RewriteRule ^(.*)/(.*)$ index.php?controller=$1&action=$2
+

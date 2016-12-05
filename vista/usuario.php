@@ -1,6 +1,14 @@
 <?php 
 $token = Session::generaToken();
-if($_SESSION["tipo"]>1){?>
+?>
+<div id="success-add-task" class="alert alert-success hide">
+	<!--<a href="#" class="close" data-dismiss="alert">&times;</a>-->
+	<div id="mensaje-success"></div>
+</div>
+<div id="error-add-task" class="alert alert-danger hide">
+	<!--<a href="#" class="close" data-dismiss="alert">&times;</a>-->
+	<div id="mensaje-error"></div>
+</div>
 <h3>Agregar Tareas</h3>
 <form action="<?=BASE_URL;?>agenda/agregar" method="post">
 	<input type="hidden" name="_token" value="<?=$token;?>">
@@ -10,7 +18,6 @@ if($_SESSION["tipo"]>1){?>
 	<textarea name="txt_descripcion" class="form-control"></textarea>
 	<input type="submit" value="Agregar" class="btn btn-warning" onclick="registrarTarea();" />
 </form>
-<?php }?>
 <h3>Lista de tareas</h3>
 <!-- Modal -->
   <div class="modal fade" id="myModal" role="dialog">
@@ -49,7 +56,31 @@ if($_SESSION["tipo"]>1){?>
   </div>
  <!-- fin modal -->
 
-<table class="table">
+ <!-- Modal Eliminar-->
+  <div class="modal fade" id="myModalDanger" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Eliminar Tarea</h4>
+        </div>
+        <div class="modal-body">
+          	<h3>¿Estas seguro de eliminar esta tarea?</h3>
+        </div>
+        <div class="modal-footer">
+        		<input type="submit" class="btn btn-danger" value="eliminar" onclick="eliminarTarea();" />
+          	</form>
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+ <!-- fin modal Eliminar -->
+
+<table id="tabla-tareas" class="table">
 	<thead> 
 		<tr> 
 			<th>id</th>
@@ -60,7 +91,11 @@ if($_SESSION["tipo"]>1){?>
 		</tr>
 	</thead>
 	<tbody>
-		<?php foreach ($tareas as $tarea){ ?>
+		<?php 
+		if(!empty($tareas))
+		{
+
+		foreach ($tareas as $tarea){ ?>
 		<tr> 
 			<td><?=$tarea["id_usuario_tarea"];?></td>
 			<td><?=$tarea["tarea"];?></td>
@@ -79,29 +114,40 @@ if($_SESSION["tipo"]>1){?>
 				<input type="hidden" name="_token" value="<?=$token;?>" />
 				<input type="hidden" name="_method" value="DELETE" />
 				<input type="hidden" name="id_tarea" value="<?=$tarea["id_usuario_tarea"];?>" />
-				<input type="submit" value="Eliminar" class="btn btn-danger btn-block" onclick="eliminarTarea(<?=$tarea["id_usuario_tarea"];?>);" />
+				<input type="submit" value="Eliminar" class="btn btn-danger btn-block" onclick="askEliminarTarea(<?=$tarea["id_usuario_tarea"];?>);" />
 				</form>
 				<!-- dejar como pendiente -->
 				<form action="<?=BASE_URL;?>agenda/pendiente" method="post">
 				<input type="hidden" name="_token" value="<?=$token;?>" />
 				<input type="hidden" name="_method" value="PUT" />
 				<input type="hidden" name="id_tarea" value="<?=$tarea["id_usuario_tarea"];?>" />
-				<input type="submit" value="pendiente" class="btn btn-success btn-block" />
+				<input type="submit" value="pendiente" class="btn btn-success btn-block" onclick="estado(<?=$tarea["id_usuario_tarea"];?>,'pendiente');" />
 				</form>
 				<!-- terminar tarea -->
 				<form action="<?=BASE_URL;?>agenda/terminar_tarea" method="post">
 				<input type="hidden" name="_token" value="<?=$token;?>" />
 				<input type="hidden" name="_method" value="PUT" />
 				<input type="hidden" name="id_tarea" value="<?=$tarea["id_usuario_tarea"];?>" />
-				<input type="submit" value="terminar" class="btn btn-info btn-block" />
+				<input type="submit" value="terminar" class="btn btn-info btn-block" onclick="estado(<?=$tarea["id_usuario_tarea"];?>,'terminar_tarea');" />
 				</form>
-				<?php }?>
+				<?php 
+					}
+				?>
 			</td>
 		</tr>
-	<?php } ?>
+	<?php 
+	}
+	}
+	else
+	{
+		echo "<div class='alert alert-info'>No has agregado tareas</div>";
+	} ?>
 	</tbody>
 	</table>
-
+	<?php if(!empty($paginacion)){ ?>
+	<!-- paginacion -->
+	<input type="hidden" name="p" value="<?php if(isset($_GET['p'])){echo $_GET['p'];}else{echo 1;}?>" />
+	<?php Helper::pagination($paginacion); }?>
 
 	
 	

@@ -52,6 +52,13 @@ if(file_exists("controllador/".$controller."_controller.php"))
 			{
 				$vista->modificarTarea();
 			}
+			else if ($action == "lista") {
+				$vista->listar();
+			}
+			else if($action == "captcha")
+			{
+				$vista->captcha();
+			}
 			else if($action=="imagen")
 			{
 				$vista->imagen();
@@ -61,10 +68,31 @@ if(file_exists("controllador/".$controller."_controller.php"))
 				$vista->estilos();
 			}
 			break;
+		case "errors":
+			$vista = new Errors_controller();
+			if($action == "token")
+			{
+				$vista->token();
+			}
+			else if($action == "noFound")
+			{
+				$vista->noFound();
+			}
+			else if($action == "noAutorizado")
+			{
+				$vista->noAutorizado();
+			}
+			else if($action == "metodo")
+			{
+				$vista->metodo();
+			}
+			break;
 		default:
 			//
 			break;
 		}
+	}else
+	{
+		echo "No se encontro el archivo";
 	}
-
 ?>

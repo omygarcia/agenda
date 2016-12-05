@@ -22,7 +22,7 @@ header
 	color:#fff;
 	display:block;
 	min-height:7em;
-	margin:0 !important;
+	margin:0 !important !important !important;
 }
 
 footer
@@ -38,10 +38,16 @@ nav
 	text-align: center;
 }
 
+nav ul
+{
+	list-style: none;
+}
+
 nav li
 {
 	display: inline-block;
 	vertical-align: top;
+	list-style: none;
 }
 
 nav a
@@ -51,7 +57,7 @@ nav a
 	display: block;
 	padding: 0.5em;
 	text-decoration: none;
-	width: 10em;
+	width: 12em;
 	-webkit-transition:all  0.5s ease-in;
 	-moz-transition:all  0.5s ease-in;
 	-o-transition:all  0.5s ease-in;
@@ -95,16 +101,41 @@ table
 	width:100%;
 }
 
-.submenu
+.sub-menu
 {
-	background: #000;
-	color: #fff;
-	width: 15em;
+	display:none;
+	position:absolute;
+	z-index:100;
 }
 
-@media screen and (max-width:350px){
-	#contenido,.from
+nav li a ul li
+{
+	position:relative;
+	display:block;
+}
+
+nav li:hover > ul
+{
+	display:block;
+}
+
+
+nav li ul li ul {
+	right:-140px;
+	top:0px;
+}
+
+
+@media screen and (max-width: 450px){
+	#contenido,.form
 	{
 		width:100%;
+	}
+
+	nav ul,nav li,nav a
+	{
+		display: block;
+		width: 100%;
+		-webkit-box-sizing: border-box;
 	}
 }

@@ -1,5 +1,62 @@
 var BASE_URL = "http://127.0.0.1:8080/agenda/";
 
+function listar()
+{
+	var tabla = $("#tabla-tareas");
+	var pagina = $("input[name=p]").val();
+	tabla.html("");
+	$.ajax({
+		url:BASE_URL+"agenda/lista",
+		type:"get",
+		data:{"p":pagina},
+		dataType:"json",
+		success:
+			function(response)
+			{
+				var tabla_datos = "";
+
+				$(response).each(function(clave,valor){
+					tabla_datos = "<tr>";
+					tabla_datos+="<td>"+valor.id_usuario_tarea+"</td>";
+					tabla_datos+="<td>"+valor.tarea+"</td>";
+					tabla_datos+="<td>"+valor.descripcion+"</td>";
+					tabla_datos+="<td>"+valor.estado+"</td>";
+					tabla_datos+="<td><a href='#' onclick='cargarTarea("+valor.id_usuario_tarea+")' class='btn btn-primary btn-block'>Editar</a>";
+					tabla_datos+="<a href='#' onclick='askEliminarTarea("+valor.id_usuario_tarea+")' class='btn btn-danger btn-block'>Eliminar</a>";
+					tabla_datos+="<a href='#' onclick='' class='btn btn-success btn-block'>pendiente</a>";
+					tabla_datos+="<a href='#' onclick='' class='btn btn-info btn-block'>terminada</a>";
+					tabla_datos+="</td></tr>";
+					tabla.append(tabla_datos);
+				});
+			},
+		error:
+			function(response)
+			{
+				alert(response.responseText);
+			},
+		before:
+			function()
+			{
+
+			},
+		complete:
+			function()
+			{
+
+			}
+	});
+
+}
+
+//listar();
+
+/*function pagina(p)
+{
+	event.preventDefault();
+	$("input[name=p").val(p);
+	listar();
+}*/
+
 function cargarTarea(id)
 {
 	event.preventDefault();
@@ -49,7 +106,9 @@ function actualizarTarea()
 		success: 
 			function(response)
 			{
-				alert(response)
+				//alert(response)
+				$("#myModal").modal("hide");
+				listar();
 			},
 		error:
 			function(response)
@@ -64,48 +123,134 @@ function registrarTarea()
 	event.preventDefault();
 	//alert("todo ok");
 	var tarea = $("input[name=txt_tarea]").val();
-	var descripcion = $("input[name=txt_descripcion]").val();
+	var descripcion = $("textarea[name=txt_descripcion]").val();
 	var token = $("input[name=_token]").val();
-	var datos = {"txt_tarea":tarea,"txt_descripcion":descripcion,"token":token};
+	var datos = {"txt_tarea":tarea,"txt_descripcion":descripcion,"_token":token};
+	//alert(datos.txt_tarea+" "+datos._token);
+	var route = BASE_URL+"agenda/agregar";
 	$.ajax({
-		url:BASE_URL+"agenda/agregar",
+		url:route,
 		type:"post",
-		datos:datos,
-		dataType:"json",
+		data:datos,
 		success:
 			function(response)
 			{
-				alert(response.mensaje);
+				//alert(response);
+				$("#success-add-task").removeClass("hide").addClass("show");
+				$("#mensaje-success").html(response);
+				$("#error-add-task").addClass("hide").removeClass("show");
+				listar();
+				$("input[name=txt_tarea]").val("");
+				$("textarea[name=txt_descripcion]").val("");
+			},
+		error:
+			function(response)
+			{
+				$("#error-add-task").removeClass("hide").addClass("show");
+				$("#mensaje-error").html(response.responseText);
+				console.log(response);
 			}
 	});
 
 }
 
-function eliminarTarea(id)
+var delete_task = 0;
+
+function askEliminarTarea(id)
 {
 	event.preventDefault();
-	var resp = confirm("¿Estas seguro de eliminar esta tarea?");
-	if(resp == true)
-	{
-		alert("first");
+	$("#myModalDanger").modal("show");
+	delete_task = id;
+}
+
+function eliminarTarea()
+{
+	event.preventDefault();
 		var token = $("input[name=_token]").val();
-		var datos = {"token":token,"id":id};
-		alert("second");
+		var metodo = $("input[name=_method]").val();
+		var datos = {"_token":token,"_method":metodo,"id_tarea":delete_task};
+		var route = BASE_URL+"agenda/eliminar_tarea"; 
+		//alert("second");
 		$.ajax({
-		url:BASE_URL+"agenda/eliminar_tarea",
+		url:route,
 		type:"post",
-		datos:datos,
-		dataType:"json",
+		data:datos,
+		//dataType:"json",
 		success:
 			function(response)
 			{
-				alert(response.mensaje);
+				//alert(response);
+				$("#myModalDanger").modal("hide");
+				listar();
 			},
 		error:
 			function(response)
 			{
-				alert(response.error);
+				alert("Error: "+response);
 			}
 		});
-	}
+}
+
+
+//funcion para modificar el estado de la tarea a pendiente o terminada
+function estado(id,estado)
+{
+	event.preventDefault();
+	//alert("ok");
+	var token = $("input[name=_token]").val();
+	var datos = {"id_tarea":id,"_token":token,"_method":"PUT"};
+	var route = BASE_URL+"agenda/"+estado;
+	//alert(route);
+	$.ajax({
+		url:route,
+		type:"post",
+		data:datos,
+		success:
+			function(response)
+			{
+				alert(response);
+				listar();
+				$("alert").html(response);
+			},
+		error:
+			function(response)
+			{
+				alert(response.responseText);
+				$("alert").html(response.responseText);
+			}
+	});
+}
+
+
+//funciones usuario
+
+
+function registroUsuario()
+{
+	event.preventDefault();
+	var datos = $("#form-registro-usuario").serialize();
+	var route = BASE_URL+"agenda/registrar";
+	var rutaCaptcha = BASE_URL+"agenda/captcha";
+	//alert(datos);
+	$.ajax({
+		url:route,
+		type:"post",
+		data:datos,
+		success:
+			function(response)
+			{
+				$("#success-add-user").removeClass("hide").addClass("show");
+				$("#mensaje-success").html(response);
+				$("#error-add-user").addClass("hide").removeClass("show");
+				document.getElementById("captcha").src=rutaCaptcha;
+			},
+		error:
+			function(response)
+			{
+				$("#error-add-user").removeClass("hide").addClass("show");
+				$("#mensaje-error").html(response.responseText);
+				$("#success-add-user").removeClass("show").addClass("hide");
+				document.getElementById("captcha").src=rutaCaptcha;
+			}
+	});
 }

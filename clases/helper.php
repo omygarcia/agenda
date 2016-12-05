@@ -31,6 +31,63 @@ class Helper
     	return $key;
 	}
 
+	public static function silueta()
+	{
+		$ruta = "";
+		if(isset($_SESSION["sexo"]))
+		{
+			if($_SESSION["sexo"] == "H")
+			{
+				$ruta = "silueta-h.jpg";
+			}
+			else
+			{
+				$ruta = "silueta-m.jpg";
+			}
+		}
+		return $ruta;
+	}
+
+	public static function pagination($arr = array())
+	{
+		$url = BASE_URL."agenda/usuario";
+		$tamaño_pagina = 5;
+		$pagina = (isset($_GET["p"]))?$_GET["p"]:null;
+		if(!$pagina)
+		{
+			$inicio = 0;
+			$pagina = 1;
+		}
+		else
+		{
+			$inicio = ($pagina-1)*$tamaño_pagina;
+		}
+		$total = count($arr);
+		//print_r($arr);
+		//echo $total;
+		$total_paginas = ceil($total/$tamaño_pagina);
+
+
+		if ($total_paginas > 1) 
+		{
+			echo '<ul class="pagination">';
+   			if ($pagina != 1)
+      			echo '<li><a href="'.$url.'&p='.($pagina-1).'" onclick="pagina('.($pagina-1).')">&laquo;</a></li>';
+      		for ($i=1;$i<=$total_paginas;$i++) 
+      		{
+         		if ($pagina == $i)
+            	//si muestro el índice de la página actual, no coloco enlace
+            	echo "<li class='active'><a href='$url&p=".$pagina."' onclick='pagina(".$pagina.")' >".$pagina."</a></li>";
+         		else
+            	//si el índice no corresponde con la página mostrada actualmente,
+            	//coloco el enlace para ir a esa página
+            	echo '<li><a href="'.$url.'&p='.$i.'" onclick="pagina('.$i.')">'.$i.'</a></li>';
+      		}
+      		if ($pagina != $total_paginas)
+         		echo '<li><a href="'.$url.'&p='.($pagina+1).'" onclick="pagina('.($pagina+1).')">&raquo;</a><li></ul>';
+		}
+	}
+
 }
 
 ?>

@@ -9,6 +9,38 @@ class Agenda
 		$this->conn = new mysqli(SERVER,USER,PW,DB);
 	}
 
+	public function listar($id_usuario,$inicio = 0,$limite = 5)
+	{
+		$consulta = "SELECT * FROM tb_usuario_tarea WHERE id_usuario=$id_usuario AND mareli=1 order by id_usuario_tarea DESC Limit $inicio,$limite";
+		if($result = $this->conn->query($consulta))
+		{
+			if($result->num_rows > 0)
+			{
+				$arr = array();
+				while ($row = $result->fetch_assoc()) {
+					array_push($arr, $row);
+				}
+				return $arr;
+			}
+		}
+
+		return false;
+	}
+
+	public function unique_email($email)
+	{
+		$consulta = "SELECT email FROM tb_usuarios WHERE email='$email'";
+		if($result = $this->conn->query($consulta))
+		{
+			if($result->num_rows > 0)
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	public function registro($arr = array())
 	{
 		$consulta = "INSERT INTO tb_usuarios(nombre,apellidos,email,pw,sexo,fecha_nac,tipo,activo) VALUES 
@@ -169,7 +201,7 @@ class Agenda
 			if($results->num_rows > 0)
 			{
 				$tareas = array();
-				while ($row = $results->fetch_array()) {
+				while ($row = $results->fetch_array(MYSQLI_ASSOC)) {
 					array_push($tareas, $row);
 				}
 				return $tareas;
